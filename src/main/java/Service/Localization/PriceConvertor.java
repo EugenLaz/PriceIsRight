@@ -13,13 +13,9 @@ public class PriceConvertor {
     private static final String fromUsdTemplate = "https://www.google.com/search?q=USD+TO+%s";
     private static final String toUsdTemplate = "https://www.google.com/search?q=%s+TO+USD";
 
-    private static String getLocalCurrency() {
-        Currency currency = Currency.getInstance(Locale.forLanguageTag("uk-UA"));
-        return currency.toString();
-    }
 
-    public static void convertFromUsdToLocal(Product product) {
-        String url = String.format(fromUsdTemplate, getLocalCurrency());
+    public static void convertFromUsd(Product product,Locale locale) {
+        String url = String.format(fromUsdTemplate, Currency.getInstance(locale));
         Double currency = null;
         try {
             currency = Double.valueOf(
@@ -42,7 +38,7 @@ public class PriceConvertor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        product.setPrice(product.getPrice()* cuurency);
+        product.setPrice(product.getPrice() * cuurency);
     }
 
 }
