@@ -36,7 +36,7 @@ public class ApplicationStarter {
             return;
         }
 
-        updatesTimer.start();
+//        updatesTimer.start();
         terminalInputListener.run();
     }
 }
