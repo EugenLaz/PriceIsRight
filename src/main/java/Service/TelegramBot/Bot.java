@@ -23,8 +23,8 @@ public class Bot extends TelegramLongPollingBot {
     private Product currentProduct;
     private boolean gameIsGoing = false;
 
-    private HashMap<String, Double> guesses = new HashMap<>();
-    private HashMap<String, Integer> score = new HashMap<>();
+    private static HashMap<String, Double> guesses = new HashMap<>();
+    private static HashMap<String, Integer> score = new HashMap<>();
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -33,8 +33,9 @@ public class Bot extends TelegramLongPollingBot {
             sendMessage(update, "game is not going");
         } else if (messageText.equals("/finish")) {
             finishGame(update);
-        } else if (StringUtils.isStrictlyNumeric(messageText)) {
-            guesses.put(update.getMessage().getFrom().getUserName(), Double.parseDouble(messageText));
+        } else if (StringUtils.isStrictlyNumeric(messageText.substring(1))) {
+            double guess = Double.parseDouble(messageText.substring(1));
+            guesses.put(update.getMessage().getFrom().getUserName(), guess);
         } else if (messageText.equals("/start") && !gameIsGoing) {
             startGame(update);
         }
@@ -55,16 +56,19 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     private String findWinner() {
+        System.out.println(guesses.toString());
         double minimalDifference = 999999999;
         String winnerUsername = null;
         double productPrice = currentProduct.getPrice();
         for (Map.Entry<String, Double> entry : guesses.entrySet()) {
-            if (productPrice - entry.getValue() < minimalDifference) {
+            if (Math.abs(productPrice - entry.getValue()) < minimalDifference) {
                 minimalDifference = entry.getValue();
                 winnerUsername = entry.getKey();
+
             }
         }
         score.put(winnerUsername, score.getOrDefault(winnerUsername, 0) + 1);
+        System.out.println(score.toString());
         return winnerUsername;
     }
 
