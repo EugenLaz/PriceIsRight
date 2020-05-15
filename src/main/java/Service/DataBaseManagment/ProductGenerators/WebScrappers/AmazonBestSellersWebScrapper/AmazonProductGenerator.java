@@ -15,6 +15,7 @@ import java.util.List;
 
 public class AmazonProductGenerator implements ProductGenerator {
     Logger logger = LogManager.getLogger(AmazonProductGenerator.class);
+
     @Override
     public List<Product> getRandomProducts(int count) {
         logger.info(AmazonProductGenerator.class.getSimpleName() + " Started ");

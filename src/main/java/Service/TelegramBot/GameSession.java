@@ -27,10 +27,9 @@ public class GameSession {
     SendMessage ProcessMessage(Update update) {
         String messageText = update.getMessage().getText();
         SendMessage result = null;
-        if(productProvider == null){
+        if (productProvider == null) {
             result = setProductProvider(update);
-        }
-        else if (messageText.equals("/finish")) {
+        } else if (messageText.equals("/finish")) {
             result = finishGame(update);
             guesses.clear();
         } else if (StringUtils.isStrictlyNumeric(messageText.substring(1))) {
@@ -70,8 +69,8 @@ public class GameSession {
 
     public SendMessage getScore(Update update) {
         StringBuilder result = new StringBuilder();
-        score.forEach((Key,Value) -> result.append(Key + ":"+ Value+"\n"));
-        return sendMessage(update,result.toString());
+        score.forEach((Key, Value) -> result.append(Key + ":" + Value + "\n"));
+        return sendMessage(update, result.toString());
     }
 
     private SendMessage finishGame(Update update) {
@@ -82,21 +81,18 @@ public class GameSession {
     }
 
     private String findWinner() {
-        System.out.println(guesses.toString());
         double minimalDifference = 999999999;
         String winnerUsername = null;
         double productPrice = currentProduct.getPrice();
 
         for (Map.Entry<String, Double> entry : guesses.entrySet()) {
             double diff = Math.abs(productPrice - entry.getValue());
-            System.out.println(diff);
             if (diff < minimalDifference) {
                 minimalDifference = entry.getValue();
                 winnerUsername = entry.getKey();
             }
         }
         score.put(winnerUsername, score.getOrDefault(winnerUsername, 0) + 1);
-        System.out.println(score.toString());
         return winnerUsername;
     }
 

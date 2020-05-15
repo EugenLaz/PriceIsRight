@@ -22,16 +22,15 @@ public enum TescoCategories {
     private final String link;
     private int lastPageIndex;
 
-
     TescoCategories(String link, int lastPageIndex) {
         this.link = link;
         this.lastPageIndex = lastPageIndex;
     }
 
     public static String getRandomLink() {
-        TescoCategories categorie = VALUES.get(ThreadLocalRandom.current().nextInt(VALUES.size()));
-        String link = categorie.getLink()
-                + ThreadLocalRandom.current().nextInt(1, categorie.lastPageIndex);
+        TescoCategories categories = VALUES.get(ThreadLocalRandom.current().nextInt(VALUES.size()));
+        String link = categories.getLink()
+                + ThreadLocalRandom.current().nextInt(1, categories.lastPageIndex);
         return link;
     }
 

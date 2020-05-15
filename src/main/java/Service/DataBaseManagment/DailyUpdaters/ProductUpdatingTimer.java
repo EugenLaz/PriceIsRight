@@ -4,7 +4,6 @@ import Service.DataBaseManagment.DailyUpdaters.Updaters.Util.UpdaterProxy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicReference;
@@ -14,8 +13,8 @@ public class ProductUpdatingTimer {
 
     AtomicReference<UpdaterProxy> updaterProxyReference;
 
-    public ProductUpdatingTimer(AtomicReference<UpdaterProxy> upadterReference) {
-        this.updaterProxyReference = upadterReference;
+    public ProductUpdatingTimer(AtomicReference<UpdaterProxy> updaterReference) {
+        this.updaterProxyReference = updaterReference;
     }
 
     public void start() {

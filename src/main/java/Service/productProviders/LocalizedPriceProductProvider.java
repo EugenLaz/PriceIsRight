@@ -20,7 +20,7 @@ public class LocalizedPriceProductProvider implements ProductProvider {
     @Override
     public Product getProduct() {
         Product product = dao.getRandomProduct();
-        PriceConvertor.convertFromUsd(product,locale);
+        PriceConvertor.convertFromUsd(product, locale);
         return product;
     }
 

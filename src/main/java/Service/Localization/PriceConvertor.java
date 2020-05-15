@@ -14,7 +14,7 @@ public class PriceConvertor {
     private static final String toUsdTemplate = "https://www.google.com/search?q=%s+TO+USD";
 
 
-    public static void convertFromUsd(Product product,Locale locale) {
+    public static void convertFromUsd(Product product, Locale locale) {
         String url = String.format(fromUsdTemplate, Currency.getInstance(locale));
         Double currency = null;
         try {
@@ -23,7 +23,7 @@ public class PriceConvertor {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
-            System.out.println("Bad argument");
+            e.printStackTrace();
         }
         product.setPrice(currency * product.getPrice());
     }

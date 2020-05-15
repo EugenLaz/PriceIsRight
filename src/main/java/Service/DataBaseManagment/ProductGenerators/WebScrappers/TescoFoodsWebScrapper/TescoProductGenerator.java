@@ -1,16 +1,14 @@
 package Service.DataBaseManagment.ProductGenerators.WebScrappers.TescoFoodsWebScrapper;
 
-import Service.Localization.PriceConvertor;
 import Service.DataBaseManagment.ProductGenerators.ProductGenerator;
+import Service.Localization.PriceConvertor;
 import entity.Product;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
-import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,7 +52,7 @@ public class TescoProductGenerator implements ProductGenerator {
         String price = product.findElement(By.xpath("//span[@data-auto='price-value']")).getText();
         String imgUrl = product.findElement(By.className("product-image__container")).findElement(By.tagName("img")).getAttribute("src");
 
-        Product result = new Product(name,Double.valueOf(price.replace("£", "")),imgUrl);
+        Product result = new Product(name, Double.valueOf(price.replace("£", "")), imgUrl);
         PriceConvertor.convertToUsd(result, Locale.UK);
         return result;
 

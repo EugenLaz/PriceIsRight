@@ -4,6 +4,6 @@ import entity.Product;
 
 public interface ProductProvider {
 
-    public Product getProduct();
+    Product getProduct();
 
 }
