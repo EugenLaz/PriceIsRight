@@ -14,6 +14,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class ApplicationStarter {
 
+
+
     private static PriceConvertor convertor;
     private static ProductGenerator scrapper;
 
@@ -35,8 +37,7 @@ public class ApplicationStarter {
         } catch (TelegramApiException e) {
             return;
         }
-
-//        updatesTimer.start();
+        updatesTimer.start();
         terminalInputListener.run();
     }
 }

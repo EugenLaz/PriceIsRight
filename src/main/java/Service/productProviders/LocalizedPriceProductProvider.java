@@ -8,6 +8,7 @@ import java.util.Locale;
 
 public class LocalizedPriceProductProvider implements ProductProvider {
 
+
     private final ProductDao dao;
     private Locale locale;
 

@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 public class Bot extends TelegramLongPollingBot {
 
-    private String botToken = "1118538657:AAGE07-mLLLXJp2tiHearfg8EbALIsxBXI0";
+    private String botToken = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
     private String botName = "";
 
     private static HashMap<Long, GameSession> sessions = new HashMap<>();
@@ -27,7 +27,14 @@ public class Bot extends TelegramLongPollingBot {
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
-        }  else if(update.getMessage().getText().equals("/start")){
+        } else if (update.getMessage().getText().equals("/score")){
+            try {
+                execute(session.getScore(update));
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+        }
+        else if(update.getMessage().getText().equals("/start")){
             try {
                 execute(session.startGame(update));
             } catch (TelegramApiException e) {

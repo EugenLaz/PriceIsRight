@@ -33,7 +33,6 @@ public class GameSession {
         else if (messageText.equals("/finish")) {
             result = finishGame(update);
             guesses.clear();
-
         } else if (StringUtils.isStrictlyNumeric(messageText.substring(1))) {
             double guess = Double.parseDouble(messageText.substring(1));
             guesses.put(update.getMessage().getFrom().getUserName(), guess);
@@ -69,6 +68,11 @@ public class GameSession {
         return sendPhoto(update);
     }
 
+    public SendMessage getScore(Update update) {
+        StringBuilder result = new StringBuilder();
+        score.forEach((Key,Value) -> result.append(Key + ":"+ Value+"\n"));
+        return sendMessage(update,result.toString());
+    }
 
     private SendMessage finishGame(Update update) {
         gameIsGoing = false;

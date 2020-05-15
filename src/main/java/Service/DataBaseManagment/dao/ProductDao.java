@@ -2,6 +2,8 @@ package Service.DataBaseManagment.dao;
 
 import configuration.HibernateUtil;
 import entity.Product;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -11,6 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Transactional
 public class ProductDao {
+    Logger logger = LogManager.getLogger(ProductDao.class);
 
     public void saveProduct(Product product) {
         Transaction transaction = null;
@@ -18,6 +21,7 @@ public class ProductDao {
             transaction = session.beginTransaction();
             session.save(product);
             transaction.commit();
+            logger.info("Product has been successfully saved to dataBase");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
@@ -29,7 +33,9 @@ public class ProductDao {
     public Product getRandomProduct() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             List<Product> products = session.createQuery("FROM Product", Product.class).list();
-            return products.get(ThreadLocalRandom.current().nextInt(0, products.size()));
+            Product product = products.get(ThreadLocalRandom.current().nextInt(0, products.size()));
+            logger.info(product.getName().substring(0, 10) + " has been retrieved from database");
+            return product;
         }
     }
 
@@ -39,11 +45,13 @@ public class ProductDao {
             transaction = session.beginTransaction();
             session.createQuery("DELETE FROM Product");
             transaction.commit();
+            logger.info("All products were deleted from database");
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            logger.warn("Exception occurred during deletion of all DataBase rows");
+            logger.error(e.getStackTrace());
         }
     }
 

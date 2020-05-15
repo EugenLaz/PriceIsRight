@@ -3,10 +3,14 @@ package Service.DataBaseManagment.ProductGenerators.WebScrappers.TescoFoodsWebSc
 import Service.Localization.PriceConvertor;
 import Service.DataBaseManagment.ProductGenerators.ProductGenerator;
 import entity.Product;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,11 +18,12 @@ import java.util.List;
 import java.util.Locale;
 
 public class TescoProductGenerator implements ProductGenerator {
+    Logger logger = LogManager.getLogger(TescoProductGenerator.class);
 
     @Override
     public List<Product> getRandomProducts(int count) {
+        logger.info(TescoProductGenerator.class.getSimpleName() + " Started");
         List<Product> result = new ArrayList<>();
-
         File file = new File("C:/Users/Евгений/Desktop/chromedriver.exe");
         System.setProperty("webdriver.chrome.driver", file.getAbsolutePath());
         WebDriver driver = new ChromeDriver();
@@ -26,7 +31,6 @@ public class TescoProductGenerator implements ProductGenerator {
         try {
             for (int i = count; i > 0; i--) {
                 String link = TescoCategories.getRandomLink();
-                System.out.println(link);
                 driver.get(link);
                 try {
                     product = getProduct(driver.findElements(By.className("tile-content")));
@@ -39,6 +43,7 @@ public class TescoProductGenerator implements ProductGenerator {
         } finally {
             driver.quit();
         }
+        logger.info("Successfully generated " + count + " products from Tesco");
         return result;
     }
 
@@ -51,7 +56,6 @@ public class TescoProductGenerator implements ProductGenerator {
 
         Product result = new Product(name,Double.valueOf(price.replace("£", "")),imgUrl);
         PriceConvertor.convertToUsd(result, Locale.UK);
-
         return result;
 
     }

@@ -2,6 +2,8 @@ package Service.DataBaseManagment.ProductGenerators.WebScrappers.AmazonBestSelle
 
 import Service.DataBaseManagment.ProductGenerators.ProductGenerator;
 import entity.Product;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -12,19 +14,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AmazonProductGenerator implements ProductGenerator {
-
+    Logger logger = LogManager.getLogger(AmazonProductGenerator.class);
     @Override
     public List<Product> getRandomProducts(int count) {
+        logger.info(AmazonProductGenerator.class.getSimpleName() + " Started ");
         List<Product> result = new ArrayList<>();
         Product product;
-        for (int i = count; i > 0; i--) {
+        for (int i = 0; i < count; i++) {
             product = getProduct();
             if (product != null) {
                 result.add(product);
             } else {
-                count++;
+                i--;
             }
         }
+        logger.info(AmazonProductGenerator.class.getSimpleName() + "Successfully generated " + count + " products from Amazon");
         return result;
     }
 
@@ -32,7 +36,6 @@ public class AmazonProductGenerator implements ProductGenerator {
         String name = product.getElementsByClass("p13n-sc-truncate").text();
         String url = product.getElementsByAttribute("src").attr("src");
         String price = product.getElementsByClass("p13n-sc-price").text().replaceAll("\\$", "");
-
         double dPriceValue;
         if (price.length() < 1) {
             return null;
@@ -46,10 +49,10 @@ public class AmazonProductGenerator implements ProductGenerator {
     }
 
     private Product getProduct() {
-        System.out.println("got new product");
         Document doc = null;
+        String link = AmazonBestSellerCategories.getRandomLink();
         try {
-            doc = Jsoup.connect(AmazonBestSellerCategories.getRandomLink()).get();
+            doc = Jsoup.connect(link).get();
         } catch (IOException e) {
             e.printStackTrace();
         }
