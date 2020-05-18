@@ -16,6 +16,9 @@ public class PriceConvertor {
 
     public static void convertFromUsd(Product product, Locale locale) {
         String url = String.format(fromUsdTemplate, Currency.getInstance(locale));
+        if(locale.equals(Locale.US)){
+            return;
+        }
         Double currency = null;
         try {
             currency = Double.valueOf(
