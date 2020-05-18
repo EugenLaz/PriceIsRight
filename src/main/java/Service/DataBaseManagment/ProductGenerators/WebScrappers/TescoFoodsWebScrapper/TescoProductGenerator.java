@@ -1,7 +1,7 @@
 package Service.DataBaseManagment.ProductGenerators.WebScrappers.TescoFoodsWebScrapper;
 
 import Service.DataBaseManagment.ProductGenerators.ProductGenerator;
-import Service.Localization.PriceConvertor;
+import Service.Localization.PriceConverter;
 import entity.Product;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,7 +53,7 @@ public class TescoProductGenerator implements ProductGenerator {
         String imgUrl = product.findElement(By.className("product-image__container")).findElement(By.tagName("img")).getAttribute("src");
 
         Product result = new Product(name, Double.valueOf(price.replace("£", "")), imgUrl);
-        PriceConvertor.convertToUsd(result, Locale.UK);
+        PriceConverter.convertToUsd(result, Locale.UK);
         return result;
 
     }

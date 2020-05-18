@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Currency;
 import java.util.Locale;
 
-public class PriceConvertor {
+public class PriceConverter {
 
     private static final String fromUsdTemplate = "https://www.google.com/search?q=USD+TO+%s";
     private static final String toUsdTemplate = "https://www.google.com/search?q=%s+TO+USD";
@@ -16,7 +16,7 @@ public class PriceConvertor {
 
     public static void convertFromUsd(Product product, Locale locale) {
         String url = String.format(fromUsdTemplate, Currency.getInstance(locale));
-        if(locale.equals(Locale.US)){
+        if (locale.equals(Locale.US)) {
             return;
         }
         Double currency = null;

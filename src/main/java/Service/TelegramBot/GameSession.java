@@ -4,6 +4,7 @@ import Service.productProviders.LocalizedPriceProductProvider;
 import Service.productProviders.ProductProvider;
 import com.mysql.cj.util.StringUtils;
 import entity.Product;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -12,7 +13,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class GameSession {
+class GameSession {
     private HashMap<String, Double> guesses = new HashMap<>();
     private HashMap<String, Integer> score = new HashMap<>();
 
@@ -20,69 +21,67 @@ public class GameSession {
     private boolean gameIsGoing = false;
     private ProductProvider productProvider;
 
-    public boolean isGameIsGoing() {
-        return gameIsGoing;
-    }
-
-    SendMessage ProcessMessage(Update update) {
+    PartialBotApiMethod ProcessMessage(Update update) {
         String messageText = update.getMessage().getText();
-        SendMessage result = null;
+        PartialBotApiMethod result = null;
         if (productProvider == null) {
             result = setProductProvider(update);
+        } else if ((!gameIsGoing) && messageText.equals("/start")) {
+            result = startGame(update);
         } else if (messageText.equals("/finish")) {
             result = finishGame(update);
             guesses.clear();
         } else if (StringUtils.isStrictlyNumeric(messageText.substring(1))) {
             double guess = Double.parseDouble(messageText.substring(1));
             guesses.put(update.getMessage().getFrom().getUserName(), guess);
+        } else if (messageText.equals("/score")) {
+            result = getScore(update);
         }
         return result;
     }
 
-    public ProductProvider getProductProvider() {
-        return productProvider;
-    }
-
-    public SendMessage setProductProvider(Update update) {
+    private SendMessage setProductProvider(Update update) {
         String text = update.getMessage().getText();
         SendMessage result;
         switch (text) {
             case ("/UA"):
                 this.productProvider = new LocalizedPriceProductProvider(Locale.forLanguageTag("UK-ua"));
-                result = sendMessage(update, "UA Locale has been set");
+                result = generateMessage(update, "UA Locale has been set");
                 break;
             case ("/US"):
                 this.productProvider = new LocalizedPriceProductProvider(Locale.US);
-                result = sendMessage(update, "US Locale has been set");
+                result = generateMessage(update, "US Locale has been set");
                 break;
             default:
-                result = sendMessage(update, "Unknown Locale.Choose one of those: \n/UA \n/US");
+                result = generateMessage(update, "Unknown Locale.Choose one of those: \n/UA \n/US");
         }
         return result;
     }
 
-    SendPhoto startGame(Update update) {
+    private SendPhoto startGame(Update update) {
         currentProduct = productProvider.getProduct();
         gameIsGoing = true;
-        return sendPhoto(update);
+        return generateMessageWithPhoto(update);
     }
 
-    public SendMessage getScore(Update update) {
+    private SendMessage getScore(Update update) {
         StringBuilder result = new StringBuilder();
-        score.forEach((Key, Value) -> result.append(Key + ":" + Value + "\n"));
-        return sendMessage(update, result.toString());
+        score.forEach((Key, Value) -> result.append(Key).append(":").append(Value).append("\n"));
+        return generateMessage(update, result.toString());
     }
 
     private SendMessage finishGame(Update update) {
         gameIsGoing = false;
-        return sendMessage(update,
-                findWinner() + "won the game.\n The price is "
-                        + String.format("%.2f", currentProduct.getPrice()));
+        return generateMessage(update, findWinner());
     }
 
     private String findWinner() {
-        double minimalDifference = 999999999;
+        if (guesses.size() == 0) {
+            return "There were no bets";
+        }
         String winnerUsername = null;
+
+        double minimalDifference = 999999999;
         double productPrice = currentProduct.getPrice();
 
         for (Map.Entry<String, Double> entry : guesses.entrySet()) {
@@ -93,10 +92,11 @@ public class GameSession {
             }
         }
         score.put(winnerUsername, score.getOrDefault(winnerUsername, 0) + 1);
-        return winnerUsername;
+        return findWinner() + "won the game.\n The price is "
+                + String.format("%.2f", currentProduct.getPrice());
     }
 
-    private SendMessage sendMessage(Update update, String text) {
+    private SendMessage generateMessage(Update update, String text) {
         long chatId = update.getMessage().getChatId();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
@@ -105,7 +105,7 @@ public class GameSession {
         return message;
     }
 
-    private SendPhoto sendPhoto(Update update) {
+    private SendPhoto generateMessageWithPhoto(Update update) {
         long chatId = update.getMessage().getChatId();
         SendPhoto photoMessage = new SendPhoto();
         photoMessage.setChatId(chatId);
@@ -113,6 +113,5 @@ public class GameSession {
         photoMessage.setPhoto(currentProduct.getImage());
         return photoMessage;
     }
-
 
 }

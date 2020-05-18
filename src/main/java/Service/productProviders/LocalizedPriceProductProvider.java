@@ -1,7 +1,7 @@
 package Service.productProviders;
 
 import Service.DataBaseManagment.dao.ProductDao;
-import Service.Localization.PriceConvertor;
+import Service.Localization.PriceConverter;
 import entity.Product;
 
 import java.util.Locale;
@@ -20,7 +20,7 @@ public class LocalizedPriceProductProvider implements ProductProvider {
     @Override
     public Product getProduct() {
         Product product = dao.getRandomProduct();
-        PriceConvertor.convertFromUsd(product, locale);
+        PriceConverter.convertFromUsd(product, locale);
         return product;
     }
 
